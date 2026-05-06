@@ -3,6 +3,7 @@
 import type { CartLine, ProductRow } from "@/lib/types/database";
 import {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -43,7 +44,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
 
   useEffect(() => {
-    setLines(loadInitial());
+    startTransition(() => {
+      setLines(loadInitial());
+    });
   }, []);
 
   useEffect(() => {
