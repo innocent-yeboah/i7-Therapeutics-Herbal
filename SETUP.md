@@ -105,7 +105,7 @@ npm start
 ## Brand & design
 
 - Primary green `#2E7D32`, secondary blue `#1E3A5F`, white background, dark gray text — see `app/globals.css` and `lib/constants.ts`.
-- Instagram: [@i7_therapeutics_herbal](https://www.instagram.com/i7_therapeutics_herbal).
+- Instagram: [@i7therapeutics_massage](https://www.instagram.com/i7therapeutics_massage).
 
 ## Security notes
 

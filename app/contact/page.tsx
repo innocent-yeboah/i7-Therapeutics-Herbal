@@ -6,7 +6,8 @@ export const metadata = {
 };
 
 export default function ContactPage() {
-  const wa = process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP || "233000000000";
+  const wa =
+    process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP || BRAND.whatsappDigits;
   const waLink = `https://wa.me/${wa.replace(/\D/g, "")}?text=${encodeURIComponent(
     `Hello ${BRAND.name}, I would love to know more about your services.`
   )}`;

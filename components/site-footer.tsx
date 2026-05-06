@@ -42,7 +42,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Instagram @i7_therapeutics_herbal
+                  Instagram {BRAND.instagramLabel}
                 </a>
               </li>
               <li>
@@ -59,8 +59,18 @@ export function SiteFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-[var(--border)] bg-[#fafafa] py-4 text-center text-xs text-[var(--muted)]">
-        © {new Date().getFullYear()} {BRAND.name}. All rights reserved.
+      <div className="border-t border-[var(--border)] bg-[#fafafa] px-4 py-4 text-center text-xs text-[var(--muted)]">
+        <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
+        <p className="mt-2">
+          <a
+            href={BRAND.siteCredit.href}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[var(--muted)] underline decoration-[var(--border)] underline-offset-2 transition hover:text-[var(--secondary)]"
+          >
+            {BRAND.siteCredit.label}
+          </a>
+        </p>
       </div>
     </footer>
   );
