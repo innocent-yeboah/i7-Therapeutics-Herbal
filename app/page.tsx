@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BRAND } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
+import { HeroSlider } from "@/components/hero-slider";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -13,48 +14,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-[var(--border)] bg-gradient-to-br from-[#f4faf4] via-white to-[#e8eef5]">
-        <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:py-24 lg:px-8">
-          <div className="flex-1 space-y-6">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[var(--secondary)]">
-              Awoshie Last Stop · Accra
-            </p>
-            <h1 className="font-serif text-4xl font-medium leading-tight text-[var(--text)] sm:text-5xl">
-              Holistic healing rooted in tradition, guided by care.
-            </h1>
-            <p className="max-w-xl text-lg text-[var(--muted)]">
-              {BRAND.name} brings together herbal wisdom, therapeutic touch, and mindful
-              coaching — online and in person — so you can feel balanced in body and mind.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/book"
-                className="inline-flex items-center justify-center rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#256628]"
-              >
-                Book a session
-              </Link>
-              <Link
-                href="/shop"
-                className="inline-flex items-center justify-center rounded-full border border-[var(--secondary)] px-6 py-3 text-sm font-semibold text-[var(--secondary)] transition hover:bg-[var(--secondary)] hover:text-white"
-              >
-                Browse herbal products
-              </Link>
-            </div>
-          </div>
-          <div className="flex-1">
-            <div className="relative aspect-[4/5] w-full max-w-md overflow-hidden rounded-3xl shadow-xl transition duration-500 hover:shadow-2xl lg:ml-auto">
-              <Image
-                src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=900&q=80"
-                alt="Calming spa and herbs"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, 400px"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       <section className="border-b border-[var(--border)] bg-white py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
