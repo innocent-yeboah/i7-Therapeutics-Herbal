@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BRAND } from "@/lib/constants";
 import { HERO_SLIDES } from "@/lib/hero-slides";
 
@@ -12,20 +12,14 @@ export function HeroSlider() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const go = useCallback((dir: "next" | "prev" | number) => {
-    setActive((i) => {
-      if (typeof dir === "number") return dir;
-      const len = HERO_SLIDES.length;
-      if (dir === "next") return (i + 1) % len;
-      return (i - 1 + len) % len;
-    });
-  }, []);
-
   useEffect(() => {
     if (paused) return;
-    const t = window.setInterval(() => go("next"), INTERVAL_MS);
+    const len = HERO_SLIDES.length;
+    const t = window.setInterval(() => {
+      setActive((i) => (i + 1) % len);
+    }, INTERVAL_MS);
     return () => window.clearInterval(t);
-  }, [paused, go]);
+  }, [paused]);
 
   return (
     <section
@@ -100,59 +94,12 @@ export function HeroSlider() {
           </div>
         </div>
 
-        {/* Captions + controls */}
-        <div className="mt-auto flex w-full flex-col gap-6 pt-16 sm:flex-row sm:items-end sm:justify-between">
+        {/* Caption (slides still auto-advance; no dot/arrow chrome) */}
+        <div className="mt-auto w-full pt-16">
           <p className="max-w-md text-sm text-white/75 motion-safe:transition-opacity motion-safe:duration-500">
             <span className="sr-only">Current slide: </span>
             {HERO_SLIDES[active]?.alt}
           </p>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div
-              className="flex gap-2 rounded-full bg-black/25 px-2 py-2 backdrop-blur-md"
-              role="tablist"
-              aria-label="Slide indicators"
-            >
-              {HERO_SLIDES.map((slide, i) => (
-                <button
-                  key={slide.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === active}
-                  aria-label={`Show slide ${i + 1}: ${slide.alt}`}
-                  onClick={() => setActive(i)}
-                  className={`h-2 rounded-full motion-safe:transition-all ${
-                    i === active
-                      ? "w-8 bg-white"
-                      : "w-2 bg-white/40 hover:bg-white/65"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => go("prev")}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur-md transition hover:bg-white/15"
-                aria-label="Previous slide"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={() => go("next")}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur-md transition hover:bg-white/15"
-                aria-label="Next slide"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </section>
