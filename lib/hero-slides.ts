@@ -14,10 +14,10 @@ export const HERO_SLIDES = [
   {
     id: "clinic-session",
     src: "/hero/hero-clinic.png",
-    alt: "Licensed massage therapist performs therapeutic back work for a client at i7 Therapeutics",
-    kicker: "In-clinic care",
+    alt: "Collage of therapeutic massage, wood therapy, restorative bodywork, and the i7 Therapeutics clinical team in a modern clinic",
+    kicker: "Integrated therapies",
     caption:
-      "Therapeutic massage in a bright, clinical environment—where professionalism meets calm.",
+      "Massage, wood therapy, and advanced bodywork—skilled clinicians delivering calm, precise care in one practice.",
   },
   {
     id: "community-outreach",
