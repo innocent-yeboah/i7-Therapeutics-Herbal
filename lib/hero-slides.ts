@@ -9,6 +9,13 @@ export const HERO_SLIDES = [
     alt: "Licensed massage therapist performing therapeutic back massage for a client in a bright i7 Therapeutics treatment room",
   },
   {
+    id: "heat-therapy",
+    src: "/hero/hero-heat-therapy.png",
+    alt: "Clinician in protective gloves treating a client's foot with hands-on care under therapeutic infrared heat",
+    imageClassName:
+      "object-cover object-[center_48%_45%] brightness-[1.02] contrast-[1.05] saturate-[1.03]",
+  },
+  {
     id: "community-outreach",
     src: "/hero/hero-community.png",
     alt: "Two i7 Therapeutics team members in branded polos smile at an outdoor community and schools outreach event",
