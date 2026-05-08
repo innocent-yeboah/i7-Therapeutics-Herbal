@@ -30,15 +30,13 @@ export function HeroSlider() {
     return () => window.clearInterval(t);
   }, [paused, len]);
 
-  const current = HERO_SLIDES[active]!;
-
   return (
     <section
       className="relative isolate min-h-[min(92vh,920px)] w-full overflow-hidden border-b border-[var(--border)]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
-      aria-label="Featured imagery — random views"
+      aria-label="Featured imagery"
     >
       {/* Slides — full-bleed crossfade */}
       {HERO_SLIDES.map((slide, i) => {
@@ -76,7 +74,7 @@ export function HeroSlider() {
         );
       })}
 
-      {/* Overlays: depth, legibility — extra weight for high-contrast clinical lighting (e.g. infrared) */}
+      {/* Overlays: depth and legibility */}
       <div
         className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-br from-[#0a1628]/90 via-[#0f2912]/76 to-[#1e3a5f]/42 sm:from-[#0a1628]/85 sm:via-[#0f2912]/68 sm:to-[#1e3a5f]/36"
         aria-hidden
@@ -116,21 +114,6 @@ export function HeroSlider() {
             >
               Browse herbal products
             </Link>
-          </div>
-        </div>
-
-        {/* Scene caption — random rotating views, no index or progress chrome */}
-        <div className="mt-auto w-full pt-14 sm:pt-20">
-          <div className="border-t border-white/20 pt-7">
-            <div key={`${current.id}-${active}`} className="hero-caption-in max-w-xl">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.26em] text-white/55">
-                Random views · {current.kicker}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-white/88 sm:text-base">
-                <span className="sr-only">Current scene: </span>
-                {current.caption}
-              </p>
-            </div>
           </div>
         </div>
       </div>
