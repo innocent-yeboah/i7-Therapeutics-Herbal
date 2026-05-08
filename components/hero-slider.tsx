@@ -8,22 +8,29 @@ import { HERO_SLIDES } from "@/lib/hero-slides";
 
 const INTERVAL_MS = 7200;
 
+function randomSlideIndex(length: number, avoid: number): number {
+  if (length <= 1) return 0;
+  let next = avoid;
+  while (next === avoid) {
+    next = Math.floor(Math.random() * length);
+  }
+  return next;
+}
+
 export function HeroSlider() {
+  const len = HERO_SLIDES.length;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (paused) return;
-    const len = HERO_SLIDES.length;
     const t = window.setInterval(() => {
-      setActive((i) => (i + 1) % len);
+      setActive((i) => randomSlideIndex(len, i));
     }, INTERVAL_MS);
     return () => window.clearInterval(t);
-  }, [paused]);
+  }, [paused, len]);
 
   const current = HERO_SLIDES[active]!;
-  const slideCount = HERO_SLIDES.length;
-  const indexLabel = String(active + 1).padStart(2, "0");
 
   return (
     <section
@@ -31,7 +38,7 @@ export function HeroSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
-      aria-label="Featured imagery"
+      aria-label="Featured imagery — random views"
     >
       {/* Slides — full-bleed crossfade */}
       {HERO_SLIDES.map((slide, i) => (
@@ -59,17 +66,17 @@ export function HeroSlider() {
         </div>
       ))}
 
-      {/* Overlays: depth, legibility, brand tint */}
+      {/* Overlays: depth, legibility — extra weight for high-contrast clinical lighting (e.g. infrared) */}
       <div
-        className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-br from-[#0a1628]/88 via-[#0f2912]/72 to-[#1e3a5f]/40 sm:from-[#0a1628]/82 sm:via-[#0f2912]/65 sm:to-[#1e3a5f]/35"
+        className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-br from-[#0a1628]/90 via-[#0f2912]/76 to-[#1e3a5f]/42 sm:from-[#0a1628]/85 sm:via-[#0f2912]/68 sm:to-[#1e3a5f]/36"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-black/55 via-transparent to-black/[0.18]"
+        className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-black/58 via-transparent to-black/20"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_80%_60%_at_70%_40%,transparent,rgba(0,0,0,0.28))]"
+        className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_75%_55%_at_65%_42%,transparent,rgba(0,0,0,0.34))]"
         aria-hidden
       />
 
@@ -102,33 +109,18 @@ export function HeroSlider() {
           </div>
         </div>
 
-        {/* Slide context — editorial caption + index */}
+        {/* Scene caption — random rotating views, no index or progress chrome */}
         <div className="mt-auto w-full pt-14 sm:pt-20">
-          <div className="flex flex-col gap-5 border-t border-white/20 pt-7 sm:flex-row sm:items-end sm:justify-between sm:gap-10">
+          <div className="border-t border-white/20 pt-7">
             <div key={current.id} className="hero-caption-in max-w-xl">
               <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.26em] text-white/55">
-                {current.kicker}
+                Random views · {current.kicker}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-white/88 sm:text-base">
-                <span className="sr-only">Current slide: </span>
+                <span className="sr-only">Current scene: </span>
                 {current.caption}
               </p>
             </div>
-            <div
-              className="flex shrink-0 items-baseline gap-2 tabular-nums text-white/45 motion-safe:transition-opacity motion-safe:duration-500"
-              aria-hidden
-            >
-              <span className="text-lg font-medium text-white/80">{indexLabel}</span>
-              <span className="text-sm">/</span>
-              <span className="text-sm">{String(slideCount).padStart(2, "0")}</span>
-            </div>
-          </div>
-          <div className="mt-4 h-0.5 w-full max-w-md overflow-hidden rounded-full bg-white/15 sm:max-w-xl">
-            <div
-              key={active}
-              className={`hero-slide-progress h-0.5 w-full rounded-full bg-gradient-to-r from-emerald-300/90 via-white/90 to-sky-200/80 ${paused ? "hero-slide-progress--paused" : ""}`}
-              style={{ "--hero-progress-ms": `${INTERVAL_MS}ms` } as React.CSSProperties}
-            />
           </div>
         </div>
       </div>

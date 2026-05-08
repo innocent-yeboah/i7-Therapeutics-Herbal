@@ -3,6 +3,14 @@
  */
 export const HERO_SLIDES = [
   {
+    id: "heat-therapy",
+    src: "/hero/hero-heat-therapy.png",
+    alt: "Clinician in protective gloves treating a client's foot with hands-on care under therapeutic infrared heat",
+    kicker: "Targeted recovery",
+    caption:
+      "Hands-on lower-limb work supported by therapeutic heat—precise, attentive care in session.",
+  },
+  {
     id: "clinic-session",
     src: "/hero/hero-clinic.png",
     alt: "Licensed massage therapist performs therapeutic back work for a client at i7 Therapeutics",
