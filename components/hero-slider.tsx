@@ -38,15 +38,15 @@ export function HeroSlider() {
       aria-roledescription={len > 1 ? "carousel" : undefined}
       aria-label="Featured imagery"
     >
-      {/* Slides — crossfade + simultaneous zoom-in (enter) / zoom-out (exit) */}
+      {/* Slides: simultaneous fade + zoom (entering scales 1.09→1 / exiting 1→1.09) */}
       {HERO_SLIDES.map((slide, i) => (
         <div
           key={slide.id}
           aria-hidden={i !== active}
-          className={`pointer-events-none absolute inset-0 origin-center transition-[opacity,transform] duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] motion-reduce:transition-opacity motion-reduce:duration-[2000ms] motion-reduce:ease-out ${
+          className={`pointer-events-none absolute inset-0 origin-center transition-[opacity,transform] duration-[2200ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] motion-reduce:transition-opacity motion-reduce:duration-[1600ms] motion-reduce:ease-out ${
             i === active
               ? "z-[1] opacity-100 scale-100"
-              : "z-0 opacity-0 scale-[0.88] motion-reduce:scale-100"
+              : "z-0 opacity-0 scale-[1.09] motion-reduce:scale-100"
           }`}
         >
           <div className="absolute inset-0">
@@ -55,7 +55,7 @@ export function HeroSlider() {
               alt={slide.alt}
               fill
               unoptimized
-              className="object-cover object-center"
+              className={slide.imageClassName}
               sizes="100vw"
               priority={i === 0}
             />
