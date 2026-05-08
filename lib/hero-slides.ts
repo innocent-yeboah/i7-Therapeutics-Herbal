@@ -1,5 +1,6 @@
 /**
  * Brand photography served from `/public/hero` for fast LCP and consistent quality.
+ * Optional `imageClassName` adjusts crop and grade for specific scenes (e.g. busy backgrounds).
  */
 export const HERO_SLIDES = [
   {
@@ -19,12 +20,14 @@ export const HERO_SLIDES = [
       "Therapeutic massage in a bright, clinical environment—where professionalism meets calm.",
   },
   {
-    id: "integrated-services",
-    src: "/hero/hero-services.png",
-    alt: "Collage of therapeutic massage, cupping, wood therapy, and the i7 Therapeutics clinical team",
-    kicker: "Integrated therapies",
+    id: "community-outreach",
+    src: "/hero/hero-community.png",
+    alt: "Two i7 Therapeutics team members in branded polos smile at an outdoor community and schools outreach event",
+    kicker: "Community & outreach",
     caption:
-      "From manual therapy to cupping and specialist techniques—delivered by an aligned clinical team.",
+      "Trusted clinicians showing up where wellness matters—partners, schools, and neighborhoods across Accra.",
+    imageClassName:
+      "object-cover object-[center_50%_42%] brightness-[1.04] contrast-[1.08] saturate-[1.07] md:object-[center_48%_40%] lg:object-[center_46%_38%]",
   },
 ] as const;
 

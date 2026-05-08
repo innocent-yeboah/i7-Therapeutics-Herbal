@@ -41,30 +41,40 @@ export function HeroSlider() {
       aria-label="Featured imagery — random views"
     >
       {/* Slides — full-bleed crossfade */}
-      {HERO_SLIDES.map((slide, i) => (
+      {HERO_SLIDES.map((slide, i) => {
+        const imgClass =
+          "imageClassName" in slide && slide.imageClassName
+            ? slide.imageClassName
+            : "object-cover object-center";
+        return (
         <div
           key={slide.id}
           aria-hidden={i !== active}
-          className={`pointer-events-none absolute inset-0 transition-opacity duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+          className={`pointer-events-none absolute inset-0 transition-opacity duration-[1800ms] ease-[cubic-bezier(0.2,0.9,0.2,1)] motion-reduce:transition-none ${
             i === active ? "z-[1] opacity-100" : "z-0 opacity-0"
           }`}
         >
           <div
-            key={i === active ? `${slide.id}-active` : `${slide.id}-idle`}
-            className={`absolute inset-0 ${i === active ? "hero-kenburns" : ""} motion-reduce:animate-none`}
+            key={i === active ? `${slide.id}-snap-active` : `${slide.id}-snap-idle`}
+            className={`absolute inset-0 ${i === active ? "hero-random-snap motion-reduce:animate-none" : ""}`}
           >
-            <Image
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              className="object-cover object-center"
-              sizes="100vw"
-              priority={i === 0}
-              quality={90}
-            />
+            <div
+              className={`absolute inset-0 ${i === active ? "hero-kenburns" : ""} motion-reduce:animate-none`}
+            >
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                className={imgClass}
+                sizes="100vw"
+                priority={i === 0}
+                quality={90}
+              />
+            </div>
           </div>
         </div>
-      ))}
+        );
+      })}
 
       {/* Overlays: depth, legibility — extra weight for high-contrast clinical lighting (e.g. infrared) */}
       <div
@@ -112,7 +122,7 @@ export function HeroSlider() {
         {/* Scene caption — random rotating views, no index or progress chrome */}
         <div className="mt-auto w-full pt-14 sm:pt-20">
           <div className="border-t border-white/20 pt-7">
-            <div key={current.id} className="hero-caption-in max-w-xl">
+            <div key={`${current.id}-${active}`} className="hero-caption-in max-w-xl">
               <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.26em] text-white/55">
                 Random views · {current.kicker}
               </p>

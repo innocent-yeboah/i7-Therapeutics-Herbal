@@ -42,19 +42,35 @@ body {
   animation: hero-kenburns 14s ease-out forwards;
 }
 
+/* Quick “snap to frame” when a random view becomes active (stacked under Ken Burns) */
+@keyframes hero-random-snap {
+  from {
+    transform: scale(1.05);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.hero-random-snap {
+  animation: hero-random-snap 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes heroCaptionIn {
   from {
     opacity: 0;
-    transform: translateY(0.5rem);
+    transform: translateY(0.65rem);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(0);
   }
 }
 
 .hero-caption-in {
-  animation: heroCaptionIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: heroCaptionIn 580ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -62,8 +78,13 @@ body {
     animation: none;
   }
 
+  .hero-random-snap {
+    animation: none;
+  }
+
   .hero-caption-in {
     animation: none;
+    filter: none;
   }
 }
 
