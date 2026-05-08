@@ -63,10 +63,10 @@ export function HeroSlider() {
                 src={slide.src}
                 alt={slide.alt}
                 fill
+                unoptimized
                 className={imgClass}
                 sizes="100vw"
                 priority={i === 0}
-                quality={90}
               />
             </div>
           </div>

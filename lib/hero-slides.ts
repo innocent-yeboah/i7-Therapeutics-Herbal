@@ -6,7 +6,7 @@ export const HERO_SLIDES = [
   {
     id: "clinic-session",
     src: "/hero/hero-clinic.png",
-    alt: "Collage of therapeutic massage, wood therapy, restorative bodywork, and the i7 Therapeutics clinical team in a modern clinic",
+    alt: "Licensed massage therapist performing therapeutic back massage for a client in a bright i7 Therapeutics treatment room",
   },
   {
     id: "community-outreach",
