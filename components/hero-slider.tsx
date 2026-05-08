@@ -23,7 +23,7 @@ export function HeroSlider() {
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || len <= 1) return;
     const t = window.setInterval(() => {
       setActive((i) => randomSlideIndex(len, i));
     }, INTERVAL_MS);
@@ -35,39 +35,33 @@ export function HeroSlider() {
       className="relative isolate min-h-[min(92vh,920px)] w-full overflow-hidden border-b border-[var(--border)]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      aria-roledescription="carousel"
+      aria-roledescription={len > 1 ? "carousel" : undefined}
       aria-label="Featured imagery"
     >
       {/* Slides — crossfade + simultaneous zoom-in (enter) / zoom-out (exit) */}
-      {HERO_SLIDES.map((slide, i) => {
-        const imgClass =
-          "imageClassName" in slide && slide.imageClassName
-            ? slide.imageClassName
-            : "object-cover object-center";
-        return (
-          <div
-            key={slide.id}
-            aria-hidden={i !== active}
-            className={`pointer-events-none absolute inset-0 origin-center transition-[opacity,transform] duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] motion-reduce:transition-opacity motion-reduce:duration-[2000ms] motion-reduce:ease-out ${
-              i === active
-                ? "z-[1] opacity-100 scale-100"
-                : "z-0 opacity-0 scale-[0.88] motion-reduce:scale-100"
-            }`}
-          >
-            <div className="absolute inset-0">
-              <Image
-                src={slide.src}
-                alt={slide.alt}
-                fill
-                unoptimized
-                className={imgClass}
-                sizes="100vw"
-                priority={i === 0}
-              />
-            </div>
+      {HERO_SLIDES.map((slide, i) => (
+        <div
+          key={slide.id}
+          aria-hidden={i !== active}
+          className={`pointer-events-none absolute inset-0 origin-center transition-[opacity,transform] duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] motion-reduce:transition-opacity motion-reduce:duration-[2000ms] motion-reduce:ease-out ${
+            i === active
+              ? "z-[1] opacity-100 scale-100"
+              : "z-0 opacity-0 scale-[0.88] motion-reduce:scale-100"
+          }`}
+        >
+          <div className="absolute inset-0">
+            <Image
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              unoptimized
+              className="object-cover object-center"
+              sizes="100vw"
+              priority={i === 0}
+            />
           </div>
-        );
-      })}
+        </div>
+      ))}
 
       {/* Overlays: depth and legibility */}
       <div

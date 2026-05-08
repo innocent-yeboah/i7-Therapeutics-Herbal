@@ -1,26 +1,11 @@
 /**
  * Brand photography served from `/public/hero` for fast LCP and consistent quality.
- * Optional `imageClassName` adjusts crop and grade for specific scenes (e.g. busy backgrounds).
  */
 export const HERO_SLIDES = [
   {
     id: "clinic-session",
     src: "/hero/hero-clinic.png",
     alt: "Licensed massage therapist performing therapeutic back massage for a client in a bright i7 Therapeutics treatment room",
-  },
-  {
-    id: "heat-therapy",
-    src: "/hero/hero-heat-therapy.png",
-    alt: "Clinician in protective gloves treating a client's foot with hands-on care under therapeutic infrared heat",
-    imageClassName:
-      "object-cover object-[center_48%_45%] brightness-[1.02] contrast-[1.05] saturate-[1.03]",
-  },
-  {
-    id: "community-outreach",
-    src: "/hero/hero-community.png",
-    alt: "Two i7 Therapeutics team members in branded polos smile at an outdoor community and schools outreach event",
-    imageClassName:
-      "object-cover object-[center_50%_42%] brightness-[1.04] contrast-[1.08] saturate-[1.07] md:object-[center_48%_40%] lg:object-[center_46%_38%]",
   },
 ] as const;
 
