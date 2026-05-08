@@ -38,27 +38,23 @@ export function HeroSlider() {
       aria-roledescription="carousel"
       aria-label="Featured imagery"
     >
-      {/* Slides — full-bleed crossfade */}
+      {/* Slides — crossfade + simultaneous zoom-in (enter) / zoom-out (exit) */}
       {HERO_SLIDES.map((slide, i) => {
         const imgClass =
           "imageClassName" in slide && slide.imageClassName
             ? slide.imageClassName
             : "object-cover object-center";
         return (
-        <div
-          key={slide.id}
-          aria-hidden={i !== active}
-          className={`pointer-events-none absolute inset-0 transition-opacity duration-[1800ms] ease-[cubic-bezier(0.2,0.9,0.2,1)] motion-reduce:transition-none ${
-            i === active ? "z-[1] opacity-100" : "z-0 opacity-0"
-          }`}
-        >
           <div
-            key={i === active ? `${slide.id}-snap-active` : `${slide.id}-snap-idle`}
-            className={`absolute inset-0 ${i === active ? "hero-random-snap motion-reduce:animate-none" : ""}`}
+            key={slide.id}
+            aria-hidden={i !== active}
+            className={`pointer-events-none absolute inset-0 origin-center transition-[opacity,transform] duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] motion-reduce:transition-opacity motion-reduce:duration-[2000ms] motion-reduce:ease-out ${
+              i === active
+                ? "z-[1] opacity-100 scale-100"
+                : "z-0 opacity-0 scale-[0.88] motion-reduce:scale-100"
+            }`}
           >
-            <div
-              className={`absolute inset-0 ${i === active ? "hero-kenburns" : ""} motion-reduce:animate-none`}
-            >
+            <div className="absolute inset-0">
               <Image
                 src={slide.src}
                 alt={slide.alt}
@@ -70,7 +66,6 @@ export function HeroSlider() {
               />
             </div>
           </div>
-        </div>
         );
       })}
 
