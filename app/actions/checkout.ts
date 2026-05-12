@@ -112,7 +112,7 @@ export async function startPaystackCheckout(orderId: string, reference: string) 
       email: user.email,
       amountPesewas,
       reference,
-      callbackUrl: `${appUrl}/checkout/complete`,
+      callbackUrl: `${appUrl}/checkout/complete?reference=${encodeURIComponent(reference)}`,
       metadata: { order_id: order.id, user_id: user.id },
     });
 
@@ -123,6 +123,43 @@ export async function startPaystackCheckout(orderId: string, reference: string) 
   }
 }
 
+/** Verify Paystack + fulfill order without requiring login (return URL / expired session safe). */
+export async function verifyCheckoutComplete(reference: string) {
+  const ref = typeof reference === "string" ? reference.trim() : "";
+  if (!ref || ref.length < 8 || ref.length > 160) {
+    return {
+      ok: false as const,
+      variant: "invalid" as const,
+      error: "Invalid payment reference.",
+    };
+  }
+
+  try {
+    const result = await fulfillOrderFromPaystack(ref);
+    if (result.ok) {
+      return { ...result, variant: "success" as const };
+    }
+    if (result.error === "Payment not successful.") {
+      return {
+        ok: false as const,
+        variant: "pending" as const,
+        error: result.error,
+        reference: ref,
+      };
+    }
+    return { ...result, variant: "failed" as const };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Could not reach payment provider.";
+    return {
+      ok: false as const,
+      variant: "pending" as const,
+      error: msg,
+      reference: ref,
+    };
+  }
+}
+
+/** Optional: same as verify path but ensures order belongs to current user when session exists. */
 export async function finalizePaidOrder(reference: string) {
   const user = await requireUser();
   const supabase = await createClient();

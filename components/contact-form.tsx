@@ -15,7 +15,8 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "ok" | "err">("idle");
+  const [status, setStatus] = useState<"idle" | "ok" | "warn" | "err">("idle");
+  const [banner, setBanner] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -25,16 +26,51 @@ export function ContactForm() {
 
   const onSubmit = async (data: FormValues) => {
     setStatus("idle");
+    setBanner(null);
     const res = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!res.ok) {
+
+    type ContactApiResponse = {
+      ok?: boolean;
+      emailed?: boolean;
+      warning?: string;
+      error?: string;
+    };
+
+    let json: ContactApiResponse | null = null;
+    try {
+      json = (await res.json()) as ContactApiResponse;
+    } catch {
+      json = null;
+    }
+
+    if (res.status === 429) {
       setStatus("err");
+      setBanner(json?.error ?? "Too many requests. Please try again in an hour.");
       return;
     }
-    setStatus("ok");
+
+    if (!res.ok || !json?.ok) {
+      setStatus("err");
+      setBanner(json?.error ?? "Something went wrong. You can also email us directly.");
+      return;
+    }
+
+    if (json.emailed === true) {
+      setStatus("ok");
+      setBanner(`Thank you — we will reply soon at ${BRAND.email}.`);
+      reset();
+      return;
+    }
+
+    setStatus("warn");
+    setBanner(
+      json.warning ??
+        "Your message was saved. We could not confirm staff email delivery — please allow extra time for a reply."
+    );
     reset();
   };
 
@@ -87,15 +123,16 @@ export function ContactForm() {
           )}
         </div>
       </div>
-      {status === "ok" && (
-        <p className="mt-4 text-sm text-[var(--primary)]">
-          Thank you — we will reply soon at {BRAND.email}.
+      {banner && status === "ok" && (
+        <p className="mt-4 text-sm text-[var(--primary)]">{banner}</p>
+      )}
+      {banner && status === "warn" && (
+        <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+          {banner}
         </p>
       )}
-      {status === "err" && (
-        <p className="mt-4 text-sm text-red-600">
-          Something went wrong. You can also email us directly.
-        </p>
+      {banner && status === "err" && (
+        <p className="mt-4 text-sm text-red-600">{banner}</p>
       )}
       <button
         type="submit"

@@ -2,6 +2,12 @@ import { createServiceClient } from "@/lib/supabase/admin";
 import { paystackVerify } from "@/lib/paystack";
 import { revalidatePath } from "next/cache";
 
+type FulfillRpcResult = {
+  ok?: boolean;
+  already_fulfilled?: boolean;
+  error?: string;
+};
+
 export async function fulfillOrderFromPaystack(reference: string) {
   const admin = createServiceClient();
   const tx = await paystackVerify(reference);
@@ -49,39 +55,23 @@ export async function fulfillOrderFromPaystack(reference: string) {
     return { ok: false as const, error: "Order items missing." };
   }
 
-  for (const line of items) {
-    const { data: prod, error: pErr } = await admin
-      .from("products")
-      .select("stock_quantity")
-      .eq("id", line.product_id)
-      .single();
+  const { data: rpcRaw, error: rpcErr } = await admin.rpc("fulfill_order_atomic", {
+    p_order_id: order.id,
+  });
 
-    if (pErr || prod === null) {
-      return { ok: false as const, error: "Stock read failed." };
-    }
-
-    const next = prod.stock_quantity - line.quantity;
-    if (next < 0) {
-      return { ok: false as const, error: "Insufficient stock at fulfillment." };
-    }
-
-    const { error: uErr } = await admin
-      .from("products")
-      .update({ stock_quantity: next })
-      .eq("id", line.product_id);
-
-    if (uErr) {
-      return { ok: false as const, error: "Stock update failed." };
-    }
+  if (rpcErr) {
+    return {
+      ok: false as const,
+      error: rpcErr.message || "Fulfillment transaction failed.",
+    };
   }
 
-  const { error: ouErr } = await admin
-    .from("orders")
-    .update({ status: "paid" })
-    .eq("id", order.id);
-
-  if (ouErr) {
-    return { ok: false as const, error: "Order update failed." };
+  const payload = rpcRaw as FulfillRpcResult | null;
+  if (payload && payload.ok === false) {
+    return {
+      ok: false as const,
+      error: payload.error ?? "Fulfillment rejected.",
+    };
   }
 
   revalidatePath("/account");

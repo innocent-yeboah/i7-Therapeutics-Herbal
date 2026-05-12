@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { BRAND } from "@/lib/constants";
 import { Resend } from "resend";
 import { whatsAppLink, normalizeWhatsAppNumber } from "@/lib/whatsapp";
+import { fulfillOrderFromPaystack } from "@/lib/orders/fulfill";
 
 export async function setAppointmentStatus(
   id: string,
@@ -120,4 +121,36 @@ export async function setStockFromForm(formData: FormData): Promise<void> {
   const quantity = Number(formData.get("quantity"));
   if (!id || Number.isNaN(quantity)) return;
   await setProductStock(id, quantity);
+}
+
+/** Re-run fulfillment for a logged Paystack charge (e.g. after webhook failure). */
+export async function retryPaystackWebhookFailure(id: string) {
+  const { supabase } = await requireAdmin();
+  const { data: row, error } = await supabase
+    .from("webhook_failures")
+    .select("id, reference, resolved_at")
+    .eq("id", id)
+    .single();
+
+  if (error || !row?.reference) {
+    return { ok: false as const, error: "Webhook record not found." };
+  }
+  if (row.resolved_at) {
+    return { ok: false as const, error: "Already resolved." };
+  }
+
+  const result = await fulfillOrderFromPaystack(row.reference);
+  if (!result.ok) {
+    return { ok: false as const, error: result.error };
+  }
+
+  await supabase
+    .from("webhook_failures")
+    .update({ resolved_at: new Date().toISOString() })
+    .eq("id", id);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/webhook-failures");
+  revalidatePath("/admin/orders");
+  return { ok: true as const };
 }

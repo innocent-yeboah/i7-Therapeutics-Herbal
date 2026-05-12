@@ -62,8 +62,8 @@ export async function paystackVerify(reference: string) {
 }
 
 export function verifyPaystackSignature(rawBody: string, signature: string | null) {
-  if (!signature) return false;
-  const secret = process.env.PAYSTACK_SECRET_KEY || "";
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  if (!secret || !signature) return false;
   const hash = createHmac("sha512", secret).update(rawBody).digest("hex");
   return hash === signature;
 }
