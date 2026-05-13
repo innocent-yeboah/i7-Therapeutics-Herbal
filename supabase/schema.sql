@@ -195,7 +195,7 @@ select * from (values
   ('Foot and hand reflexology', 'Targeted reflex work to ease tension and support natural recovery.', 150, 60, 'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=800&q=80'),
   ('Acupressure', 'Point-based therapy without needles for pain relief and relaxation.', 160, 45, 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&q=80'),
   ('Massage therapy', 'Therapeutic massage for stress relief, mobility, and whole-body calm.', 200, 60, 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80'),
-  ('Healing with diet', 'Personalized food and herb-forward nutrition plans.', 180, 60, 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80'),
+  ('Healing with diet', 'Personalized food and herb-forward nutrition plans.', 180, 60, '/services/healing-with-diet.png'),
   ('Mindfulness and meditation', 'Guided breath and awareness practices for nervous system balance.', 120, 45, 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80'),
   ('Alternative healing practices', 'Integrative modalities matched to your wellness goals.', 190, 60, 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&q=80'),
   ('Online tutoring', 'Virtual sessions for herbal studies, self-care skills, and Q&A.', 100, 50, 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80')
