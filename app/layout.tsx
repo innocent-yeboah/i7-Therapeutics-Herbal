@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/lib/cart/cart-context";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
 import { BRAND } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />
+          <FloatingWhatsAppButton />
         </CartProvider>
       </body>
     </html>
