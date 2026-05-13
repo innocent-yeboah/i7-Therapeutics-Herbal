@@ -54,7 +54,7 @@ export function HeroSlider() {
               src={slide.src}
               alt={slide.alt}
               fill
-              unoptimized
+              unoptimized={slide.src.startsWith("http")}
               className={slide.imageClassName}
               sizes="100vw"
               priority={i === 0}

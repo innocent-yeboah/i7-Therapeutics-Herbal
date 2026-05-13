@@ -1,20 +1,19 @@
 /**
- * Hero imagery: remote Unsplash URLs (allowed in `next.config.mjs` `remotePatterns`).
- * Replace with `/public/hero/*.png` when you add brand assets there.
+ * Hero carousel images — brand photography in `/public/hero`.
  */
 export const HERO_SLIDES = [
   {
     id: "clinic-session",
-    src: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1920&q=85",
-    alt: "Licensed massage therapist performing therapeutic back massage for a client in a bright clinic setting",
-    imageClassName: "object-cover object-center",
+    src: "/hero/hero-clinic-session.png",
+    alt: "i7 Therapeutics therapist in branded blue polo performing a therapeutic back massage in a bright Accra clinic, with studio logo and garden view",
+    imageClassName: "object-cover object-[center_42%]",
   },
   {
-    id: "herbal-wellness",
-    src: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1920&q=85",
-    alt: "Herbal wellness and natural healing — plants, care, and therapeutic calm",
+    id: "clinic-collage",
+    src: "/hero/hero-clinic-collage.png",
+    alt: "Collage of i7 Therapeutics care: therapeutic massage, cupping, wood therapy, and the clinical team at reception",
     imageClassName:
-      "object-cover object-[center_50%_44%] sm:object-[center_50%_42%] md:object-[center_50%_40%]",
+      "object-cover object-center sm:object-[center_45%] md:object-[center_40%]",
   },
 ] as const satisfies readonly {
   id: string;
