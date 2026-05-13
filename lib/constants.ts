@@ -16,6 +16,13 @@ export const BRAND = {
   mapsEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.5!2d-0.25!3d5.605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzYnMTguMCJOIDDCsDE1JzAwLjAiVw!5e0!3m2!1sen!2sgh!4v1",
   mapsLink: "https://maps.google.com/?q=Awoshie+Last+Stop+Accra",
+  /** Production site (used when NEXT_PUBLIC_APP_URL is unset in server contexts if needed). */
+  websiteUrl: "https://i7therapeuticsherbal.com",
+  /**
+   * Default From: for Resend when `RESEND_FROM_EMAIL` is not set.
+   * Must match a verified sending domain in Resend (i7therapeuticsherbal.com).
+   */
+  emailFrom: "hello@i7therapeuticsherbal.com",
 };
 
 export const COLORS = {

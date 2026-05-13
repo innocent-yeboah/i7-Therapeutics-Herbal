@@ -29,11 +29,35 @@ function LoginForm() {
 
   const onSubmit = async (data: Form) => {
     setErr(null);
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ||
+      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
+    ) {
+      setErr(
+        "This site is missing Supabase configuration (NEXT_PUBLIC_SUPABASE_URL / ANON_KEY)."
+      );
+      return;
+    }
+
+    const email = data.email.trim().toLowerCase();
     const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
+      email,
       password: data.password,
     });
     if (error) {
+      const code = (error as { code?: string }).code;
+      if (code === "email_not_confirmed") {
+        setErr(
+          "This email is not confirmed yet. In Supabase Dashboard → Authentication → Users, confirm the user or disable Confirm email for testing."
+        );
+        return;
+      }
+      if (code === "invalid_credentials" || /invalid login|invalid cred/i.test(error.message)) {
+        setErr(
+          'Invalid email or password. To reset the admin password, from the project root run: npm run create-admin -- your@email.com "NewPassword"'
+        );
+        return;
+      }
       setErr(error.message);
       return;
     }

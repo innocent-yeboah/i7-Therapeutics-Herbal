@@ -1,18 +1,10 @@
-import Link from "next/link";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-const links = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/appointments", label: "Appointments" },
-  { href: "/admin/orders", label: "Orders" },
-  { href: "/admin/contacts", label: "Contacts" },
-  { href: "/admin/webhook-failures", label: "Webhooks" },
-  { href: "/admin/customers", label: "Customers" },
-  { href: "/admin/inventory", label: "Inventory" },
-  { href: "/admin/reports", label: "Reports" },
-  { href: "/admin/follow-up", label: "Follow-up" },
-];
+export const metadata = {
+  title: "Operations",
+};
 
 export default async function AdminLayout({
   children,
@@ -28,7 +20,7 @@ export default async function AdminLayout({
   }
   const { data: row } = await supabase
     .from("users")
-    .select("is_admin")
+    .select("is_admin, name")
     .eq("id", user.id)
     .single();
   if (!row?.is_admin) {
@@ -36,23 +28,14 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 lg:flex-row lg:px-8">
-        <aside className="w-full shrink-0 lg:w-56">
-          <p className="font-serif text-lg text-[var(--primary)]">Admin</p>
-          <nav className="mt-4 flex flex-wrap gap-2 lg:flex-col">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="rounded-full border border-transparent px-3 py-1.5 text-sm text-[var(--text)] hover:border-[var(--border)] hover:bg-white lg:justify-start"
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-        </aside>
-        <div className="min-w-0 flex-1">{children}</div>
+    <div className="min-h-screen bg-[#0b1220] lg:bg-[#f1f5f9]">
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        <AdminSidebar userEmail={user.email ?? ""} displayName={row.name?.trim() || ""} />
+        <main className="min-w-0 flex-1 bg-[#f8fafc] lg:min-h-screen">
+          <div className="mx-auto min-h-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

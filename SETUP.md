@@ -21,7 +21,7 @@ npm install
 1. Open **Supabase** → **SQL Editor**.
 2. Paste the full contents of `supabase/schema.sql` and run it.
 3. Enable **Authentication** → **Email** provider (email + password).
-4. After you sign up the first user, promote them to admin:
+4. After you sign up the first user, promote them to admin (see **Create an admin login** below), or use the `npm run create-admin` script.
 
 ```sql
 update public.users set is_admin = true where email = 'you@yourdomain.com';
@@ -51,7 +51,50 @@ Edit `.env.local`:
 | `CRON_SECRET` | `Authorization: Bearer …` for `/api/cron/appointment-reminders` |
 | `NEXT_PUBLIC_BUSINESS_WHATSAPP` | Digits only or E.164, e.g. `233XXXXXXXXX` for site WhatsApp links |
 | `TWILIO_*` | Optional: auto WhatsApp sends from the cron job |
-| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Optional: contact form + admin email follow-ups |
+| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Email via [Resend](https://resend.com). Use any address on the verified domain **i7therapeuticsherbal.com** (e.g. `hello@i7therapeuticsherbal.com`). If `RESEND_FROM_EMAIL` is omitted, the app defaults to `BRAND.emailFrom` in `lib/constants.ts`. |
+| `ADMIN_NOTIFICATION_EMAILS` | Optional. Comma-separated addresses for **admin alerts** (new paid orders, new bookings). Defaults to the business email in `lib/constants.ts`. |
+
+### Admin notifications (email)
+
+When Resend is configured, the system **sends** branded emails to:
+
+- **Admin inbox(es)** — `ADMIN_NOTIFICATION_EMAILS`, or the business email from `BRAND.email`, for:
+  - Successful payment / new paid order (after Paystack fulfillment)
+  - New appointment booking request
+  - Contact form messages (existing flow to `BRAND.email`)
+- **Customers** — order confirmation after payment; booking acknowledgement after they schedule.
+
+If `RESEND_API_KEY` is missing, orders and bookings still save; notifications are skipped (check server logs for `[notifications]` warnings).
+
+### Create an admin login (password)
+
+**Option A — script (local)**
+
+From the **repo root** (folder that contains `web/`) or from **web/**:
+
+```bash
+# From repo root (parent of web/)
+npm run create-admin -- admin@yourdomain.com 'YourSecurePassPhrase'
+
+# From web/ only
+cd web
+npm run create-admin -- admin@yourdomain.com 'YourSecurePassPhrase'
+```
+
+Optional: set `BOOTSTRAP_ADMIN_NAME` in `.env.local` for the display name. The script creates the Auth user (email confirmed), then sets `public.users.is_admin = true`. If the email **already exists**, the same command **resets the password** and re-confirms the email.
+
+**Option B — Supabase Dashboard**
+
+1. **Authentication → Users → Add user** (email + password, check email confirmed if you want immediate login).
+2. SQL Editor:
+
+```sql
+update public.users
+set is_admin = true, name = 'Site Admin'
+where email = 'admin@yourdomain.com';
+```
+
+3. Sign in at `/account/login`, then open `/admin`.
 
 ## 5. Paystack
 

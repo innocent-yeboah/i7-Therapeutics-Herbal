@@ -36,6 +36,7 @@ export function ContactForm() {
     type ContactApiResponse = {
       ok?: boolean;
       emailed?: boolean;
+      customerEmailed?: boolean;
       warning?: string;
       error?: string;
     };
@@ -59,9 +60,21 @@ export function ContactForm() {
       return;
     }
 
-    if (json.emailed === true) {
+    if (json.emailed === true && json.customerEmailed !== false) {
       setStatus("ok");
-      setBanner(`Thank you — we will reply soon at ${BRAND.email}.`);
+      setBanner(
+        `Thank you — we have emailed you a confirmation at the address you provided and will reply soon. You can also reach us at ${BRAND.email}.`
+      );
+      reset();
+      return;
+    }
+
+    if (json.emailed === true && json.customerEmailed === false) {
+      setStatus("warn");
+      setBanner(
+        json.warning ??
+          "We received your message and notified our team. We could not send a copy to your inbox; we will still reply to your email address."
+      );
       reset();
       return;
     }

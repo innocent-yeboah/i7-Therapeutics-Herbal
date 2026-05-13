@@ -1,6 +1,11 @@
+import { getResendFromAddress } from "@/lib/email/from";
 import { BRAND } from "@/lib/constants";
 import { createServiceClient } from "@/lib/supabase/admin";
 import { checkContactRateLimit, getClientIp } from "@/lib/rate-limit";
+import {
+  contactAdminNotificationEmail,
+  contactCustomerConfirmationEmail,
+} from "@/lib/email/templates";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -36,9 +41,9 @@ export async function POST(req: Request) {
       message = message.slice(0, MAX_MESSAGE);
     }
 
-    let admin: ReturnType<typeof createServiceClient>;
+    let adminClient: ReturnType<typeof createServiceClient>;
     try {
-      admin = createServiceClient();
+      adminClient = createServiceClient();
     } catch {
       console.error("Supabase service client unavailable for contact save");
       return NextResponse.json(
@@ -47,7 +52,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: inserted, error: insertErr } = await admin
+    const { data: inserted, error: insertErr } = await adminClient
       .from("contacts")
       .insert({
         name,
@@ -67,7 +72,8 @@ export async function POST(req: Request) {
 
     const contactId = inserted.id;
     const apiKey = process.env.RESEND_API_KEY?.trim();
-    const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+    const from = getResendFromAddress();
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || undefined;
 
     if (!apiKey) {
       return NextResponse.json({
@@ -82,25 +88,60 @@ export async function POST(req: Request) {
 
     try {
       const resend = new Resend(apiKey);
+      const adminMail = contactAdminNotificationEmail({ name, email, message, siteUrl });
+
       await resend.emails.send({
         from,
         to: BRAND.email,
         replyTo: email,
-        subject: `Website message from ${name}`,
-        text: `${message}\n\n— ${name} <${email}>`,
+        subject: adminMail.subject,
+        html: adminMail.html,
+        text: adminMail.text,
       });
 
-      await admin
+      let customerMailError: string | null = null;
+      try {
+        const customerMail = contactCustomerConfirmationEmail({ name, siteUrl });
+        await resend.emails.send({
+          from,
+          to: email,
+          replyTo: BRAND.email,
+          subject: customerMail.subject,
+          html: customerMail.html,
+          text: customerMail.text,
+        });
+      } catch (custErr) {
+        customerMailError =
+          custErr instanceof Error ? custErr.message : "Customer confirmation send failed";
+        console.error("Resend customer confirmation failed", custErr);
+      }
+
+      await adminClient
         .from("contacts")
-        .update({ status: "emailed", email_error: null })
+        .update({
+          status: "emailed",
+          email_error: customerMailError ? customerMailError.slice(0, 500) : null,
+        })
         .eq("id", contactId);
 
-      return NextResponse.json({ ok: true, saved: true, emailed: true, contactId });
+      return NextResponse.json({
+        ok: true,
+        saved: true,
+        emailed: true,
+        customerEmailed: !customerMailError,
+        contactId,
+        ...(customerMailError
+          ? {
+              warning:
+                "We received your message. A confirmation email could not be delivered to your inbox, but we will still reply to the address you provided.",
+            }
+          : {}),
+      });
     } catch (emailErr) {
       const emailErrorMsg =
         emailErr instanceof Error ? emailErr.message : "Resend send failed";
 
-      await admin
+      await adminClient
         .from("contacts")
         .update({ status: "email_failed", email_error: emailErrorMsg.slice(0, 500) })
         .eq("id", contactId);
@@ -113,7 +154,7 @@ export async function POST(req: Request) {
         emailed: false,
         contactId,
         warning:
-          "Your message was saved, but we could not send the notification email. Our team can still see it in the dashboard — please allow extra time for a reply.",
+          "Your message was saved, but we could not notify our team by email. Our staff can still see it in the dashboard — please allow extra time for a reply.",
       });
     }
   } catch {
