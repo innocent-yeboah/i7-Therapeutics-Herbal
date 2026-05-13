@@ -154,4 +154,4 @@ npm start
 
 - Never commit `.env.local`.
 - Rotate `SUPABASE_SERVICE_ROLE_KEY` and `PAYSTACK_SECRET_KEY` if exposed.
-- Admin routes require `users.is_admin = true`; middleware only enforces authentication for `/admin`.
+- Admin routes require `users.is_admin = true`; root `proxy.ts` only enforces authentication for `/admin`.
