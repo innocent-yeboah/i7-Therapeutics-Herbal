@@ -24,25 +24,21 @@ export default async function AccountPage() {
     .eq("id", user.id)
     .single();
 
-  const isAdmin = !!profile?.is_admin;
+  if (profile?.is_admin) {
+    redirect("/admin");
+  }
 
-  const { data: orders } = !isAdmin
-    ? await supabase
-        .from("orders")
-        .select("id, total_amount, status, created_at, paystack_reference")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-    : { data: [] as { id: string; total_amount: number; status: string; created_at: string; paystack_reference: string | null }[] };
+  const { data: orders } = await supabase
+    .from("orders")
+    .select("id, total_amount, status, created_at, paystack_reference")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
 
-  const { data: appointments } = !isAdmin
-    ? await supabase
-        .from("appointments")
-        .select(
-          "id, appointment_date, appointment_time, status, notes, services(name)"
-        )
-        .eq("user_id", user.id)
-        .order("appointment_date", { ascending: false })
-    : { data: [] as { id: string; appointment_date: string; appointment_time: string; status: string; notes: string | null; services: unknown }[] };
+  const { data: appointments } = await supabase
+    .from("appointments")
+    .select("id, appointment_date, appointment_time, status, notes, services(name)")
+    .eq("user_id", user.id)
+    .order("appointment_date", { ascending: false });
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -54,41 +50,17 @@ export default async function AccountPage() {
         <SignOutButton />
       </div>
 
-      {isAdmin && (
-        <div className="mt-8 rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50 to-[#f0f7f4] p-6 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/90">
-                Administrator
-              </p>
-              <p className="mt-1 font-serif text-xl text-slate-900">Operations console</p>
-              <p className="mt-1 text-sm text-slate-600">
-                Manage orders, inventory, bookings, and reporting from the executive dashboard.
-              </p>
-            </div>
-            <Link
-              href="/admin"
-              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#1e3a5f] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#162d49]"
-            >
-              Open dashboard
-            </Link>
-          </div>
-        </div>
-      )}
-
       <div className="mt-10">
         <PersonalizedProfileCard
           variant="account"
           email={user.email ?? ""}
           name={profile?.name ?? ""}
           phone={profile?.phone ?? ""}
-          isAdmin={isAdmin}
+          isAdmin={false}
           createdAt={profile?.created_at ?? user.created_at ?? new Date().toISOString()}
         />
       </div>
 
-      {!isAdmin && (
-        <>
       <section className="mt-10">
         <h2 className="font-serif text-xl text-[var(--text)]">Orders</h2>
         <div className="mt-4 space-y-3">
@@ -146,8 +118,6 @@ export default async function AccountPage() {
           })}
         </div>
       </section>
-        </>
-      )}
     </div>
   );
 }

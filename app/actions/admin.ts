@@ -259,9 +259,10 @@ export async function setOrderFromForm(formData: FormData): Promise<void> {
 
 export async function setStockFromForm(formData: FormData): Promise<void> {
   const id = String(formData.get("id") || "");
-  const quantity = Number(formData.get("quantity"));
+  const quantity = Number(formData.get("stock_quantity") ?? formData.get("quantity"));
   if (!id || Number.isNaN(quantity)) return;
   await setProductStock(id, quantity);
+  revalidatePath("/admin/products");
 }
 
 export async function updateCustomerProfileFromForm(formData: FormData): Promise<void> {
@@ -277,6 +278,7 @@ export async function updateCustomerProfileFromForm(formData: FormData): Promise
     return;
   }
   revalidatePath("/admin/customers");
+  revalidatePath("/admin/clients");
   revalidatePath("/admin");
   revalidatePath("/account");
 }

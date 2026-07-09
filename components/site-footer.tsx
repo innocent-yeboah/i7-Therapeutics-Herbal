@@ -83,6 +83,11 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link className="hover:text-[var(--primary)]" href="/shop">
+                  Coming soon
+                </Link>
+              </li>
+              <li>
                 <Link className="hover:text-[var(--primary)]" href="/book">
                   Book
                 </Link>

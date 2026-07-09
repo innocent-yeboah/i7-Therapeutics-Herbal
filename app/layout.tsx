@@ -4,6 +4,7 @@ import { CartProvider } from "@/lib/cart/cart-context";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
+import { StorefrontChrome } from "@/components/storefront-chrome";
 import { BRAND } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -23,10 +24,13 @@ export default function RootLayout({
     <html lang="en">
       <body className="flex min-h-screen flex-col bg-white font-sans text-[var(--text)] antialiased">
         <CartProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-          <FloatingWhatsAppButton />
+          <StorefrontChrome
+            header={<SiteHeader />}
+            footer={<SiteFooter />}
+            floating={<FloatingWhatsAppButton />}
+          >
+            {children}
+          </StorefrontChrome>
         </CartProvider>
       </body>
     </html>

@@ -33,11 +33,32 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith("/admin") && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/account/login";
-    url.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(url);
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    const isLoginPage = request.nextUrl.pathname === "/admin/login";
+
+    if (isLoginPage) {
+      return supabaseResponse;
+    }
+
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      url.searchParams.set("next", request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+
+    const { data: profile } = await supabase
+      .from("users")
+      .select("is_admin")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      url.searchParams.set("error", "not_admin");
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

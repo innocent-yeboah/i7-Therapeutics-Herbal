@@ -10,11 +10,23 @@ export const metadata = {
 export default async function BookPage({
   searchParams,
 }: {
-  searchParams?: { service?: string };
+  searchParams?: Promise<{ service?: string; slug?: string }>;
 }) {
+  const params = searchParams ? await searchParams : {};
   const user = await getCurrentUser();
   const supabase = await createClient();
   const { data: services } = await supabase.from("services").select("*").order("name");
+
+  let preselectedServiceId = params.service;
+  if (!preselectedServiceId && params.slug) {
+    const bySlug = services?.find((s) => s.slug === params.slug);
+    if (bySlug) preselectedServiceId = bySlug.id;
+  }
+
+  const bookQuery = new URLSearchParams();
+  if (params.service) bookQuery.set("service", params.service);
+  if (params.slug) bookQuery.set("slug", params.slug);
+  const bookPath = bookQuery.toString() ? `/book?${bookQuery.toString()}` : "/book";
 
   if (!user) {
     return (
@@ -24,7 +36,7 @@ export default async function BookPage({
           Create an account or sign in to request an appointment and track your visit history.
         </p>
         <Link
-          href={`/account/login?next=${encodeURIComponent("/book")}`}
+          href={`/account/login?next=${encodeURIComponent(bookPath)}`}
           className="mt-8 inline-block rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white"
         >
           Continue to sign in
@@ -53,7 +65,7 @@ export default async function BookPage({
       <div className="mt-12">
         <BookingForm
           services={services}
-          preselectedServiceId={searchParams?.service}
+          preselectedServiceId={preselectedServiceId}
         />
       </div>
     </div>

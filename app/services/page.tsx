@@ -1,65 +1,88 @@
-import Image from "next/image";
-import Link from "next/link";
+import type { Metadata } from "next";
+import { HEALING_SERVICES } from "@/lib/services";
 import { createClient } from "@/lib/supabase/server";
+import { ServiceCard } from "@/components/service-card";
 
-export const metadata = {
-  title: "Services",
+export const metadata: Metadata = {
+  title: "Traditional Healing Therapies | i7 Therapeutics Herbal",
+  description:
+    "Explore our traditional healing therapies in Accra — massage, cupping, sports injury recovery, lymphatic drainage, meridian massage, and more. Book your session today.",
+  openGraph: {
+    title: "Traditional Healing Therapies | i7 Therapeutics Herbal",
+    description:
+      "Massage, cupping, sports recovery, and holistic healing therapies tailored to your wellness goals.",
+  },
 };
 
 export default async function ServicesPage() {
   const supabase = await createClient();
-  const { data: services } = await supabase.from("services").select("*").order("name");
+  const { data: dbServices } = await supabase.from("services").select("id, slug, name");
+
+  const slugToId = new Map(
+    (dbServices ?? [])
+      .filter((s) => s.slug)
+      .map((s) => [s.slug as string, s.id])
+  );
+
+  // Fallback: match by name for services without slug column populated yet
+  for (const svc of dbServices ?? []) {
+    const match = HEALING_SERVICES.find(
+      (h) => h.name.toLowerCase() === svc.name.toLowerCase()
+    );
+    if (match && !slugToId.has(match.slug)) {
+      slugToId.set(match.slug, svc.id);
+    }
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    name: "i7 Therapeutics Herbal",
+    description: metadata.description,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Traditional Healing Therapies",
+      itemListElement: HEALING_SERVICES.map((s, i) => ({
+        "@type": "Offer",
+        position: i + 1,
+        itemOffered: {
+          "@type": "Service",
+          name: s.name,
+          description: s.shortDescription,
+          url: `https://i7therapeuticsherbal.com/services/${s.slug}`,
+        },
+      })),
+    },
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="max-w-2xl">
-        <h1 className="font-serif text-4xl text-[var(--text)]">Our services</h1>
-        <p className="mt-3 text-[var(--muted)]">
-          Each session is tailored to your goals — from traditional Chinese medicine to restorative
-          massage and online tutoring.
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <header className="max-w-3xl">
+        <p className="text-sm font-semibold uppercase tracking-wide text-[var(--primary)]">
+          Traditional Healing Therapies
+        </p>
+        <h1 className="mt-2 font-serif text-4xl text-[var(--text)] sm:text-5xl">
+          Our services
+        </h1>
+        <p className="mt-4 text-lg leading-relaxed text-[var(--muted)]">
+          Each session is tailored to your body, mind, and goals — from restorative massage and
+          cupping to sports recovery and meridian bodywork. Explore our therapies and book the care
+          that fits you.
         </p>
       </header>
 
-      <div className="mt-12 grid gap-8 lg:grid-cols-2">
-        {(services ?? []).map((s) => (
-          <article
-            key={s.id}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl lg:flex-row"
-          >
-            <div className="relative aspect-video w-full shrink-0 lg:w-2/5 lg:aspect-auto lg:min-h-[220px]">
-              <Image
-                src={
-                  s.image ||
-                  "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80"
-                }
-                alt={s.name}
-                fill
-                className="object-cover transition duration-500 group-hover:scale-105"
-                sizes="(max-width:1024px) 100vw, 40vw"
-              />
-            </div>
-            <div className="flex flex-1 flex-col p-6">
-              <h2 className="font-serif text-2xl text-[var(--text)]">{s.name}</h2>
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted)]">
-                {s.description}
-              </p>
-              <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-[var(--border)] pt-4">
-                <div className="text-sm text-[var(--muted)]">
-                  <span className="font-semibold text-[var(--secondary)]">
-                    GHS {Number(s.price).toFixed(0)}
-                  </span>
-                  <span className="mx-2">·</span>
-                  <span>{s.duration_minutes} min</span>
-                </div>
-                <Link
-                  href={`/book?service=${s.id}`}
-                  className="ml-auto rounded-full bg-[var(--primary)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#256628]"
-                >
-                  Book now
-                </Link>
-              </div>
-            </div>
-          </article>
+      <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {HEALING_SERVICES.map((service) => (
+          <ServiceCard
+            key={service.slug}
+            service={service}
+            supabaseId={slugToId.get(service.slug)}
+          />
         ))}
       </div>
     </div>

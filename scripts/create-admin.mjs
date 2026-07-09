@@ -134,4 +134,4 @@ if (upErr) {
 
 console.log("Admin account ready.");
 console.log("  Email:", email);
-console.log("  Sign in at /account/login then open /admin");
+console.log("  Sign in at /admin/login");

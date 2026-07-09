@@ -337,7 +337,7 @@ export default async function AdminHome() {
             )}
           </ul>
           <Link
-            href="/admin/inventory"
+            href="/admin/products"
             className="mt-5 inline-flex text-xs font-bold text-amber-950 underline decoration-amber-400 hover:decoration-amber-600"
           >
             Inventory control →

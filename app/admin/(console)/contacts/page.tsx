@@ -1,3 +1,4 @@
+import { updateContactStatusFromForm } from "@/app/actions/admin-crud";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -66,6 +67,13 @@ export default async function AdminContactsPage() {
               <p className="mt-2 text-xs text-red-700">Email error: {row.email_error}</p>
             )}
             <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{row.message}</p>
+            <form action={updateContactStatusFromForm} className="mt-4">
+              <input type="hidden" name="id" value={row.id} />
+              <input type="hidden" name="status" value="emailed" />
+              <button type="submit" className="rounded-lg border px-3 py-1 text-xs font-semibold">
+                Mark handled
+              </button>
+            </form>
           </article>
         ))}
       </div>

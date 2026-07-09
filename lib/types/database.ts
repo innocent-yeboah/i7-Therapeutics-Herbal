@@ -14,6 +14,7 @@ export type ServiceRow = {
   price: number;
   duration_minutes: number;
   image: string | null;
+  slug: string | null;
   created_at: string;
 };
 

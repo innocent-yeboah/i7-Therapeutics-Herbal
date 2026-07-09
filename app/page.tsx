@@ -1,16 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BRAND } from "@/lib/constants";
+import { HEALING_SERVICES } from "@/lib/services";
 import { createClient } from "@/lib/supabase/server";
 import { HeroSlider } from "@/components/hero-slider";
+import { ServiceCard } from "@/components/service-card";
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const [{ data: services }, { data: products }, { data: testimonials }] = await Promise.all([
-    supabase.from("services").select("*").limit(3),
+  const [{ data: dbServices }, { data: products }, { data: testimonials }] = await Promise.all([
+    supabase.from("services").select("id, slug, name"),
     supabase.from("products").select("*").limit(3),
     supabase.from("testimonials").select("*").eq("approved", true).limit(6),
   ]);
+
+  const slugToId = new Map(
+    (dbServices ?? [])
+      .filter((s) => s.slug)
+      .map((s) => [s.slug as string, s.id])
+  );
+
+  const featuredServices = HEALING_SERVICES.slice(0, 3);
 
   return (
     <div>
@@ -20,9 +29,9 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="font-serif text-3xl text-[var(--text)]">Services</h2>
+              <h2 className="font-serif text-3xl text-[var(--text)]">Traditional Healing Therapies</h2>
               <p className="mt-2 text-[var(--muted)]">
-                Personalized care across TCM, massage, reflexology, and more.
+                Massage, cupping, sports recovery, and holistic bodywork tailored to you.
               </p>
             </div>
             <Link
@@ -33,38 +42,12 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {(services ?? []).map((s) => (
-              <article
-                key={s.id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="relative aspect-video">
-                  <Image
-                    src={s.image || "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80"}
-                    alt={s.name}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-105"
-                    sizes="(max-width:1024px) 100vw, 33vw"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="font-serif text-xl text-[var(--text)]">{s.name}</h3>
-                  <p className="mt-2 line-clamp-3 flex-1 text-sm text-[var(--muted)]">
-                    {s.description}
-                  </p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[var(--secondary)]">
-                      GHS {Number(s.price).toFixed(0)}
-                    </span>
-                    <Link
-                      href={`/book?service=${s.id}`}
-                      className="rounded-full bg-[var(--primary)] px-4 py-2 text-xs font-semibold text-white hover:bg-[#256628]"
-                    >
-                      Book
-                    </Link>
-                  </div>
-                </div>
-              </article>
+            {featuredServices.map((s) => (
+              <ServiceCard
+                key={s.slug}
+                service={s}
+                supabaseId={slugToId.get(s.slug)}
+              />
             ))}
           </div>
         </div>
@@ -126,7 +109,7 @@ export default async function HomePage() {
                 className="rounded-2xl border border-[var(--border)] bg-[#fafafa] p-6 transition hover:shadow-md"
               >
                 <blockquote className="text-sm leading-relaxed text-[var(--muted)]">
-                  “{t.content}”
+                  &ldquo;{t.content}&rdquo;
                 </blockquote>
                 <figcaption className="mt-4 text-sm font-semibold text-[var(--text)]">
                   {t.client_name}
@@ -146,18 +129,16 @@ export default async function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              href="/contact"
-              className="rounded-full bg-[var(--secondary)] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-[#162d49]"
+              href="/book"
+              className="rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-[#256628]"
             >
-              Contact us
+              Book a session
             </Link>
             <Link
-              href={BRAND.instagram}
-              target="_blank"
-              rel="noreferrer"
+              href="/shop"
               className="rounded-full border border-[var(--border)] bg-white px-6 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--primary)]"
             >
-              Instagram
+              Coming soon offerings
             </Link>
           </div>
         </div>
