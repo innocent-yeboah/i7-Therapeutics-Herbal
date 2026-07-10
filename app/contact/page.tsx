@@ -18,7 +18,8 @@ export default function ContactPage() {
         <div>
           <h1 className="font-serif text-4xl text-[var(--text)]">Contact</h1>
           <p className="mt-3 text-[var(--muted)]">
-            Share a question, collaboration idea, or ask how to prepare for your first session.
+            Reach out for service inquiries, booking support, or partnership opportunities. Our team
+            will respond promptly to assist you.
           </p>
           <ul className="mt-8 space-y-4 text-sm">
             <li>

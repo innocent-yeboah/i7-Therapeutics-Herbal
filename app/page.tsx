@@ -7,10 +7,9 @@ import { ServiceCard } from "@/components/service-card";
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const [{ data: dbServices }, { data: products }, { data: testimonials }] = await Promise.all([
+  const [{ data: dbServices }, { data: products }] = await Promise.all([
     supabase.from("services").select("id, slug, name"),
     supabase.from("products").select("*").limit(3),
-    supabase.from("testimonials").select("*").eq("approved", true).limit(6),
   ]);
 
   const slugToId = new Map(
@@ -94,28 +93,6 @@ export default async function HomePage() {
                   </Link>
                 </div>
               </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl text-[var(--text)]">Loved by our community</h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {(testimonials ?? []).map((t) => (
-              <figure
-                key={t.id}
-                className="rounded-2xl border border-[var(--border)] bg-[#fafafa] p-6 transition hover:shadow-md"
-              >
-                <blockquote className="text-sm leading-relaxed text-[var(--muted)]">
-                  &ldquo;{t.content}&rdquo;
-                </blockquote>
-                <figcaption className="mt-4 text-sm font-semibold text-[var(--text)]">
-                  {t.client_name}
-                  <span className="ml-2 text-[var(--primary)]">{"★".repeat(t.rating)}</span>
-                </figcaption>
-              </figure>
             ))}
           </div>
         </div>

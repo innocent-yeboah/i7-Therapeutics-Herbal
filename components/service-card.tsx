@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { HealingService } from "@/lib/services";
 import { getServiceBookingHref, getServiceInquireHref } from "@/lib/services";
-import { ServiceIcon } from "@/components/service-icon";
 
 export function ServiceCard({
   service,
@@ -25,9 +24,6 @@ export function ServiceCard({
           sizes="(max-width:1024px) 100vw, 33vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-        <span className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-[var(--primary)] shadow-sm backdrop-blur">
-          <ServiceIcon type={service.icon} className="h-5 w-5" />
-        </span>
       </Link>
 
       <div className="flex flex-1 flex-col p-6">

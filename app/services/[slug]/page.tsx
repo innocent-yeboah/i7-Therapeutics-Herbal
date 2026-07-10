@@ -9,7 +9,6 @@ import {
   getServiceBookingHref,
   getServiceInquireHref,
 } from "@/lib/services";
-import { ServiceIcon } from "@/components/service-icon";
 import { createClient } from "@/lib/supabase/server";
 import { BRAND } from "@/lib/constants";
 
@@ -102,10 +101,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-4 pb-8 sm:px-6 lg:px-8">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-[var(--primary)] shadow-lg">
-            <ServiceIcon type={service.icon} className="h-6 w-6" />
-          </span>
-          <h1 className="mt-4 font-serif text-3xl text-white sm:text-5xl">{service.name}</h1>
+          <h1 className="font-serif text-3xl text-white sm:text-5xl">{service.name}</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/85 sm:text-base">
             {service.shortDescription}
           </p>
@@ -226,14 +222,9 @@ export default async function ServiceDetailPage({ params }: Props) {
                 href={`/services/${s.slug}`}
                 className="group rounded-xl border border-[var(--border)] bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-md"
               >
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef7ef] text-[var(--primary)]">
-                    <ServiceIcon type={s.icon} className="h-4 w-4" />
-                  </span>
-                  <span className="font-medium text-[var(--text)] group-hover:text-[var(--primary)]">
-                    {s.name}
-                  </span>
-                </div>
+                <span className="font-medium text-[var(--text)] group-hover:text-[var(--primary)]">
+                  {s.name}
+                </span>
               </Link>
             ))}
           </div>
