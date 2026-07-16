@@ -35,6 +35,13 @@ export default async function AdminHome() {
         </div>
         <div className="flex flex-wrap gap-3">
           <Link
+            href="/admin/consultations"
+            className="inline-flex items-center justify-center rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-900 shadow-sm transition hover:bg-emerald-100"
+          >
+            Consultations
+            {kpis.consultationPending > 0 ? ` (${kpis.consultationPending})` : ""}
+          </Link>
+          <Link
             href="/admin/reports"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
           >
@@ -85,6 +92,26 @@ export default async function AdminHome() {
           </div>
         </section>
       ) : null}
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50 to-white p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/80">
+            Consultations
+          </p>
+          <p className="mt-3 font-serif text-3xl font-semibold text-slate-900 tabular-nums">
+            {kpis.consultationTotal}
+          </p>
+          <p className="mt-2 text-xs text-slate-600">
+            {kpis.consultationPending} pending · {kpis.consultationAwaitingConfirm} awaiting confirm
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Conversion {kpis.consultationConversionRate}% ·{" "}
+            <Link href="/admin/consultations" className="font-semibold text-emerald-800 hover:underline">
+              Open queue →
+            </Link>
+          </p>
+        </div>
+      </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm ring-1 ring-slate-950/5 transition hover:shadow-md">

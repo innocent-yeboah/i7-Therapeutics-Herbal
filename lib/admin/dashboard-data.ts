@@ -74,15 +74,42 @@ export async function getAdminDashboardData(supabase: SupabaseClient) {
     supabase.from("orders").select("status"),
   ]);
 
+  let consultationTotal = 0;
+  let consultationPending = 0;
+  let consultationAwaitingConfirm = 0;
+  let consultationConfirmed = 0;
+  let consultationCompleted = 0;
+  try {
+    const [total, pending, awaiting, confirmed, completed] = await Promise.all([
+      supabase.from("consultation_requests").select("*", { count: "exact", head: true }),
+      supabase
+        .from("consultation_requests")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending"),
+      supabase
+        .from("consultation_requests")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "recommendation_sent"),
+      supabase
+        .from("consultation_requests")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "booking_confirmed"),
+      supabase
+        .from("consultation_requests")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "completed"),
+    ]);
+    consultationTotal = total.count ?? 0;
+    consultationPending = pending.count ?? 0;
+    consultationAwaitingConfirm = awaiting.count ?? 0;
+    consultationConfirmed = confirmed.count ?? 0;
+    consultationCompleted = completed.count ?? 0;
+  } catch {
+    // Table may not exist until migration is applied
+  }
+
   const revenueLifetime =
     allOrders?.reduce((s, o) => s + Number(o.total_amount), 0) ?? 0;
-
-  const pendingPayment =
-    allOrdersForStatus?.filter((o) => o.status === "pending").length ?? 0;
-  const fulfilling =
-    allOrdersForStatus?.filter((o) =>
-      ["paid", "processing", "shipped"].includes(o.status)
-    ).length ?? 0;
 
   const dayLabels: string[] = [];
   for (let i = 6; i >= 0; i--) {
@@ -133,6 +160,21 @@ export async function getAdminDashboardData(supabase: SupabaseClient) {
     statusBreakdown[o.status] = (statusBreakdown[o.status] ?? 0) + 1;
   });
 
+  const pendingPayment =
+    allOrdersForStatus?.filter((o) => o.status === "pending").length ?? 0;
+  const fulfilling =
+    allOrdersForStatus?.filter((o) =>
+      ["paid", "processing", "shipped"].includes(o.status)
+    ).length ?? 0;
+
+  const completed = consultationCompleted ?? 0;
+  const confirmed = consultationConfirmed ?? 0;
+  const conversionDenom = completed + confirmed + (consultationAwaitingConfirm ?? 0);
+  const consultationConversionRate =
+    conversionDenom > 0
+      ? Math.round(((completed + confirmed) / conversionDenom) * 100)
+      : 0;
+
   return {
     kpis: {
       revenueLifetime,
@@ -146,6 +188,12 @@ export async function getAdminDashboardData(supabase: SupabaseClient) {
       lowStockCount: lowProducts?.length ?? 0,
       contactAttention: contactAttention ?? 0,
       webhookOpen: webhookOpen ?? 0,
+      consultationTotal: consultationTotal ?? 0,
+      consultationPending: consultationPending ?? 0,
+      consultationAwaitingConfirm: consultationAwaitingConfirm ?? 0,
+      consultationConfirmed: confirmed,
+      consultationCompleted: completed,
+      consultationConversionRate,
     },
     chartSeries,
     topServices,

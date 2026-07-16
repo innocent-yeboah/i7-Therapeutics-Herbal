@@ -62,6 +62,23 @@ export default async function AccountPage() {
       </div>
 
       <section className="mt-10">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <h2 className="font-serif text-xl text-[var(--text)]">Consultations</h2>
+          <div className="flex gap-3 text-sm">
+            <Link href="/dashboard" className="font-semibold text-[var(--primary)] hover:underline">
+              View all
+            </Link>
+            <Link href="/consultation" className="font-semibold text-[var(--primary)] hover:underline">
+              Book consultation
+            </Link>
+          </div>
+        </div>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          Track consultation requests, recommendations, and confirmed sessions in your dashboard.
+        </p>
+      </section>
+
+      <section className="mt-10">
         <h2 className="font-serif text-xl text-[var(--text)]">Orders</h2>
         <div className="mt-4 space-y-3">
           {(orders ?? []).length === 0 && (
@@ -94,8 +111,8 @@ export default async function AccountPage() {
           {(appointments ?? []).length === 0 && (
             <p className="text-sm text-[var(--muted)]">
               No appointments yet.{" "}
-              <Link href="/book" className="font-semibold text-[var(--primary)]">
-                Book one
+              <Link href="/consultation" className="font-semibold text-[var(--primary)]">
+                Book a consultation
               </Link>
             </p>
           )}

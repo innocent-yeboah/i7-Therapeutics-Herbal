@@ -82,9 +82,6 @@ export default async function HomePage() {
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-[var(--text)]">{p.name}</h3>
-                  <p className="mt-1 text-sm font-semibold text-[var(--secondary)]">
-                    GHS {Number(p.price).toFixed(0)}
-                  </p>
                   <Link
                     href="/shop"
                     className="mt-3 inline-block text-sm text-[var(--primary)] hover:underline"
@@ -106,10 +103,10 @@ export default async function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              href="/book"
+              href="/consultation"
               className="rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-[#256628]"
             >
-              Book a session
+              Book a consultation
             </Link>
             <Link
               href="/shop"

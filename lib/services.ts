@@ -352,9 +352,8 @@ export function getAllServiceSlugs(): string[] {
   return HEALING_SERVICES.map((s) => s.slug);
 }
 
-export function getServiceBookingHref(slug: string, supabaseId?: string | null): string {
-  if (supabaseId) return `/book?service=${supabaseId}`;
-  return `/book?slug=${slug}`;
+export function getServiceBookingHref(_slug?: string, _supabaseId?: string | null): string {
+  return "/consultation";
 }
 
 export function getServiceInquireHref(serviceName: string): string {

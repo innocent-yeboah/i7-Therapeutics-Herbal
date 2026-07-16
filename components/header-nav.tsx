@@ -10,7 +10,7 @@ import { CartBadge } from "./cart-badge";
 const mainLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
-  { href: "/book", label: "Book" },
+  { href: "/consultation", label: "Book" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

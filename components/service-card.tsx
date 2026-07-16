@@ -48,13 +48,6 @@ export function ServiceCard({
         )}
 
         <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--border)] pt-4">
-          <div className="text-sm text-[var(--muted)]">
-            <span className="font-semibold text-[var(--secondary)]">
-              GHS {service.priceGhs}
-            </span>
-            <span className="mx-2">·</span>
-            <span>{service.durationMinutes} min</span>
-          </div>
           <div className="ml-auto flex flex-wrap gap-2">
             <Link
               href={`/services/${service.slug}`}
@@ -67,7 +60,7 @@ export function ServiceCard({
                 href={bookHref}
                 className="rounded-full bg-[var(--primary)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#256628]"
               >
-                Book now
+                Book consultation
               </Link>
             ) : (
               <a

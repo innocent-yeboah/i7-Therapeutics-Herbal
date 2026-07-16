@@ -92,10 +92,10 @@ export function HeroSlider() {
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/book"
+              href="/consultation"
               className="inline-flex items-center justify-center rounded-full bg-[var(--primary)] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/25 transition hover:-translate-y-0.5 hover:bg-[#256628] hover:shadow-xl"
             >
-              Book a session
+              Book a consultation
             </Link>
             <Link
               href="/shop"

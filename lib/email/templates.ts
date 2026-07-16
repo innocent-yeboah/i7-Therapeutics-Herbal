@@ -464,3 +464,202 @@ export function orderStatusUpdateCustomerEmail(input: {
     text,
   };
 }
+
+/** Client confirmation after submitting a consultation request. */
+export function consultationRequestClientEmail(input: {
+  clientName: string;
+  preferredContact: string;
+  siteUrl?: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `Your consultation request has been received — ${BRAND.name}`;
+  const dashboard =
+    input.siteUrl && input.siteUrl.startsWith("http")
+      ? `<p style="margin:20px 0 0;"><a href="${escapeHtml(input.siteUrl)}/dashboard" style="display:inline-block;background:${COLORS.primary};color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;">View your consultations</a></p>`
+      : "";
+  const inner = `
+            <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:${COLORS.secondary};font-family:Georgia,'Times New Roman',serif;">Dear ${escapeHtml(input.clientName)},</p>
+            <p style="margin:0 0 12px;">Thank you for booking a consultation with ${escapeHtml(BRAND.name)}.</p>
+            <p style="margin:0 0 12px;">We have received your request and will review it within <strong>24 hours</strong>.</p>
+            <p style="margin:0 0 12px;">You will receive a personalized therapy recommendation via your preferred contact method (${escapeHtml(input.preferredContact)}).</p>
+            <p style="margin:0 0 12px;">If you have any questions, please reply to this email.</p>
+            ${dashboard}
+            <p style="margin:24px 0 0;">— ${escapeHtml(BRAND.name)} Team</p>`;
+  const text = [
+    `Dear ${input.clientName},`,
+    "",
+    `Thank you for booking a consultation with ${BRAND.name}.`,
+    "We have received your request and will review it within 24 hours.",
+    `You will receive a personalized recommendation via ${input.preferredContact}.`,
+    "",
+    `— ${BRAND.name} Team`,
+  ].join("\n");
+  return {
+    subject,
+    html: brandShell({
+      title: subject,
+      preheader: "We will review your consultation within 24 hours.",
+      innerHtml: inner,
+      siteUrl: input.siteUrl,
+    }),
+    text,
+  };
+}
+
+/** Ops alert for a new consultation request. */
+export function consultationRequestAdminEmail(input: {
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  preferredContact: string;
+  conditionDescription: string;
+  consultationId: string;
+  siteUrl?: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `New consultation request — ${input.clientName}`;
+  const reviewUrl =
+    input.siteUrl && input.siteUrl.startsWith("http")
+      ? `${input.siteUrl}/admin/consultations/${input.consultationId}/review`
+      : "";
+  const cta = reviewUrl
+    ? `<p style="margin:20px 0 0;"><a href="${escapeHtml(reviewUrl)}" style="display:inline-block;background:${COLORS.secondary};color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;">Review request</a></p>`
+    : "";
+  const snippet =
+    input.conditionDescription.length > 280
+      ? `${input.conditionDescription.slice(0, 280)}…`
+      : input.conditionDescription;
+  const inner = `
+            <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:${COLORS.secondary};font-family:Georgia,'Times New Roman',serif;">New consultation request</p>
+            <p style="margin:0 0 8px;"><strong>Client:</strong> ${escapeHtml(input.clientName)}</p>
+            <p style="margin:0 0 8px;"><strong>Email:</strong> ${escapeHtml(input.clientEmail)}</p>
+            <p style="margin:0 0 8px;"><strong>Phone:</strong> ${escapeHtml(input.clientPhone)}</p>
+            <p style="margin:0 0 8px;"><strong>Preferred contact:</strong> ${escapeHtml(input.preferredContact)}</p>
+            <div style="background:#f4f7fb;border-left:4px solid ${COLORS.primary};padding:14px 16px;border-radius:0 8px 8px 0;margin:16px 0;">
+              <p style="margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;">Condition</p>
+              <p style="margin:0;">${formatMultiline(snippet)}</p>
+            </div>
+            ${cta}`;
+  const text = [
+    `New consultation from ${input.clientName}`,
+    `Email: ${input.clientEmail}`,
+    `Phone: ${input.clientPhone}`,
+    `Preferred contact: ${input.preferredContact}`,
+    "",
+    `Condition: ${snippet}`,
+    reviewUrl ? `Review: ${reviewUrl}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  return {
+    subject,
+    html: brandShell({
+      title: subject,
+      preheader: `${input.clientName} submitted a consultation request.`,
+      innerHtml: inner,
+      siteUrl: input.siteUrl,
+    }),
+    text,
+  };
+}
+
+/** Personalized therapy recommendation to the client. */
+export function consultationRecommendationEmail(input: {
+  clientName: string;
+  therapies: string[];
+  duration: string;
+  priceGhs: string;
+  notes?: string | null;
+  confirmUrl: string;
+  siteUrl?: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `Your personalized therapy recommendation — ${BRAND.name}`;
+  const therapyList = input.therapies
+    .map((t) => `<li style="margin:0 0 6px;">${escapeHtml(t)}</li>`)
+    .join("");
+  const notesBlock = input.notes?.trim()
+    ? `<p style="margin:16px 0 8px;font-weight:600;">What to expect</p><p style="margin:0 0 12px;">${formatMultiline(input.notes)}</p>`
+    : "";
+  const inner = `
+            <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:${COLORS.secondary};font-family:Georgia,'Times New Roman',serif;">Hello ${escapeHtml(input.clientName)},</p>
+            <p style="margin:0 0 12px;">Thank you for your consultation request. After reviewing your condition, we recommend the following:</p>
+            <p style="margin:16px 0 8px;font-weight:600;">Recommended therapies</p>
+            <ul style="margin:0 0 12px;padding-left:20px;">${therapyList}</ul>
+            <p style="margin:0 0 8px;"><strong>Recommended duration:</strong> ${escapeHtml(input.duration)}</p>
+            <p style="margin:0 0 12px;"><strong>Investment:</strong> GHS ${escapeHtml(input.priceGhs)}</p>
+            ${notesBlock}
+            <p style="margin:20px 0 0;"><a href="${escapeHtml(input.confirmUrl)}" style="display:inline-block;background:${COLORS.primary};color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;">Confirm booking</a></p>
+            <p style="margin:16px 0 0;">If you have any questions, please reply to this message.</p>
+            <p style="margin:24px 0 0;">— ${escapeHtml(BRAND.name)} Team</p>`;
+  const text = [
+    `Hello ${input.clientName},`,
+    "",
+    "Thank you for your consultation. We recommend:",
+    ...input.therapies.map((t) => `- ${t}`),
+    "",
+    `Duration: ${input.duration}`,
+    `Investment: GHS ${input.priceGhs}`,
+    input.notes?.trim() ? `\nWhat to expect:\n${input.notes}` : "",
+    "",
+    `Confirm booking: ${input.confirmUrl}`,
+    "",
+    `— ${BRAND.name} Team`,
+  ]
+    .filter((line) => line !== undefined)
+    .join("\n");
+  return {
+    subject,
+    html: brandShell({
+      title: subject,
+      preheader: "Your personalized therapy recommendation is ready.",
+      innerHtml: inner,
+      siteUrl: input.siteUrl,
+    }),
+    text,
+  };
+}
+
+/** Booking confirmed after client selects date/time. */
+export function consultationBookingConfirmedEmail(input: {
+  clientName: string;
+  therapy: string;
+  duration: string;
+  priceGhs: string;
+  date: string;
+  time: string;
+  siteUrl?: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `Session confirmed — ${BRAND.name}`;
+  const inner = `
+            <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:${COLORS.secondary};font-family:Georgia,'Times New Roman',serif;">Dear ${escapeHtml(input.clientName)},</p>
+            <p style="margin:0 0 12px;">Your healing session is confirmed. We look forward to welcoming you.</p>
+            <div style="background:#f4f7fb;border-left:4px solid ${COLORS.primary};padding:14px 16px;border-radius:0 8px 8px 0;margin:16px 0;">
+              <p style="margin:0 0 6px;"><strong>Therapy:</strong> ${escapeHtml(input.therapy)}</p>
+              <p style="margin:0 0 6px;"><strong>Duration:</strong> ${escapeHtml(input.duration)}</p>
+              <p style="margin:0 0 6px;"><strong>Investment:</strong> GHS ${escapeHtml(input.priceGhs)}</p>
+              <p style="margin:0 0 6px;"><strong>Date:</strong> ${escapeHtml(input.date)}</p>
+              <p style="margin:0;"><strong>Time:</strong> ${escapeHtml(input.time)}</p>
+            </div>
+            <p style="margin:0 0 12px;">If you need to reschedule, reply to this email or message us on WhatsApp.</p>
+            <p style="margin:24px 0 0;">— ${escapeHtml(BRAND.name)} Team</p>`;
+  const text = [
+    `Dear ${input.clientName},`,
+    "",
+    "Your session is confirmed.",
+    `Therapy: ${input.therapy}`,
+    `Duration: ${input.duration}`,
+    `Investment: GHS ${input.priceGhs}`,
+    `Date: ${input.date}`,
+    `Time: ${input.time}`,
+    "",
+    `— ${BRAND.name} Team`,
+  ].join("\n");
+  return {
+    subject,
+    html: brandShell({
+      title: subject,
+      preheader: `Your session is confirmed for ${input.date}.`,
+      innerHtml: inner,
+      siteUrl: input.siteUrl,
+    }),
+    text,
+  };
+}

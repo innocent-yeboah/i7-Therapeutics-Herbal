@@ -77,8 +77,9 @@ export default async function ServiceDetailPage({ params }: Props) {
     },
     offers: {
       "@type": "Offer",
-      price: service.priceGhs,
+      description: "Personalized after consultation",
       priceCurrency: "GHS",
+      url: `${BRAND.websiteUrl}/consultation`,
     },
     image: service.image,
   };
@@ -173,11 +174,12 @@ export default async function ServiceDetailPage({ params }: Props) {
 
           <aside className="lg:col-span-1">
             <div className="sticky top-24 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
-              <p className="text-sm text-[var(--muted)]">Session</p>
-              <p className="mt-1 font-serif text-3xl text-[var(--secondary)]">
-                GHS {service.priceGhs}
+              <p className="text-sm text-[var(--muted)]">Consultation-first care</p>
+              <p className="mt-2 font-serif text-xl text-[var(--text)]">Personalized plan</p>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+                Duration and investment are confirmed after your consultation, based on your
+                condition and recommended therapies.
               </p>
-              <p className="mt-1 text-sm text-[var(--muted)]">{service.durationMinutes} minutes</p>
 
               <div className="mt-6 space-y-3">
                 {service.bookable ? (
@@ -185,7 +187,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                     href={bookHref}
                     className="block w-full rounded-full bg-[var(--primary)] py-3 text-center text-sm font-semibold text-white transition hover:bg-[#256628]"
                   >
-                    Book this service
+                    Book a consultation
                   </Link>
                 ) : (
                   <a

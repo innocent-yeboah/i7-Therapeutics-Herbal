@@ -1,72 +1,39 @@
 import Link from "next/link";
-import { BookingForm } from "@/components/booking-form";
-import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth/session";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Book",
+  description:
+    "Book a consultation with i7 Therapeutics Herbal. We recommend therapies after understanding your needs.",
 };
 
-export default async function BookPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ service?: string; slug?: string }>;
-}) {
-  const params = searchParams ? await searchParams : {};
-  const user = await getCurrentUser();
-  const supabase = await createClient();
-  const { data: services } = await supabase.from("services").select("*").order("name");
-
-  let preselectedServiceId = params.service;
-  if (!preselectedServiceId && params.slug) {
-    const bySlug = services?.find((s) => s.slug === params.slug);
-    if (bySlug) preselectedServiceId = bySlug.id;
-  }
-
-  const bookQuery = new URLSearchParams();
-  if (params.service) bookQuery.set("service", params.service);
-  if (params.slug) bookQuery.set("slug", params.slug);
-  const bookPath = bookQuery.toString() ? `/book?${bookQuery.toString()}` : "/book";
-
-  if (!user) {
-    return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="font-serif text-3xl text-[var(--text)]">Sign in to book</h1>
-        <p className="mt-3 text-[var(--muted)]">
-          Create an account or sign in to request an appointment and track your visit history.
-        </p>
-        <Link
-          href={`/account/login?next=${encodeURIComponent(bookPath)}`}
-          className="mt-8 inline-block rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white"
-        >
-          Continue to sign in
-        </Link>
-      </div>
-    );
-  }
-
-  if (!services?.length) {
-    return (
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <p>Services are not configured yet. Please check back soon.</p>
-      </div>
-    );
-  }
-
+/**
+ * Legacy /book route — consultation-first model replaces fixed service booking.
+ */
+export default function BookPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="max-w-2xl">
-        <h1 className="font-serif text-4xl text-[var(--text)]">Book a session</h1>
-        <p className="mt-3 text-[var(--muted)]">
-          Choose your service, select a quiet day, and pick a time that fits. We will confirm by
-          email or WhatsApp.
-        </p>
-      </header>
-      <div className="mt-12">
-        <BookingForm
-          services={services}
-          preselectedServiceId={preselectedServiceId}
-        />
+    <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6 lg:px-8">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">
+        How we book
+      </p>
+      <h1 className="mt-3 font-serif text-4xl text-[var(--text)]">Start with a consultation</h1>
+      <p className="mx-auto mt-4 max-w-lg text-[var(--muted)]">
+        We no longer book fixed packages online. Every client begins with a consultation so our
+        practitioner can recommend the right therapies, duration, and pricing for your condition.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link
+          href="/consultation"
+          className="rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256628]"
+        >
+          Book a consultation
+        </Link>
+        <Link
+          href="/services"
+          className="rounded-full border border-[var(--border)] px-6 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--primary)]"
+        >
+          Explore therapies
+        </Link>
       </div>
     </div>
   );

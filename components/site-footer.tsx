@@ -88,8 +88,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-[var(--primary)]" href="/book">
-                  Book
+                <Link className="hover:text-[var(--primary)]" href="/consultation">
+                  Book consultation
                 </Link>
               </li>
             </ul>
