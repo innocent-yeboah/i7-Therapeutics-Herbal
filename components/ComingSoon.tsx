@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { COMING_SOON_OFFERINGS } from "@/lib/services";
-import { ComingSoonIcon } from "@/components/service-icon";
 import { WaitlistForm } from "@/components/waitlist-form";
 
 export function ComingSoon() {
@@ -40,12 +39,9 @@ export function ComingSoon() {
               <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-[var(--secondary)] shadow-sm backdrop-blur">
                 Coming soon
               </span>
-              <div className="absolute bottom-4 left-4 flex items-center gap-2 text-white">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur">
-                  <ComingSoonIcon type={offering.icon} className="h-5 w-5" />
-                </span>
-                <h3 className="font-serif text-xl">{offering.name}</h3>
-              </div>
+              <h3 className="absolute bottom-4 left-4 font-serif text-xl text-white">
+                {offering.name}
+              </h3>
             </div>
             <div className="p-5">
               <p className="text-sm leading-relaxed text-[var(--muted)]">{offering.description}</p>
