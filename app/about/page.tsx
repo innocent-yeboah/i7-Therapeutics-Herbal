@@ -25,11 +25,12 @@ export default function AboutPage() {
         </div>
         <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-xl">
           <Image
-            src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=900&q=80"
-            alt="Therapist at work"
+            src="/about/about-therapist.jpg"
+            alt="i7 Therapeutics therapist providing a focused foot treatment to a client"
             fill
-            className="object-cover"
+            className="object-cover object-center"
             sizes="(max-width:1024px) 100vw, 50vw"
+            priority
           />
         </div>
       </div>
