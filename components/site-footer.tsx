@@ -1,4 +1,5 @@
 import { BRAND } from "@/lib/constants";
+import { HealingBrand } from "@/components/healing-brand";
 import Link from "next/link";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -63,7 +64,13 @@ export function SiteFooter() {
     <footer className="mt-auto border-t border-[var(--border)] bg-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:justify-between lg:px-8">
         <div>
-          <p className="font-serif text-xl text-[var(--primary)]">{BRAND.name}</p>
+          <Link
+            href="/"
+            aria-label="i7 Therapeutics Herbal home"
+            className="inline-flex rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+          >
+            <HealingBrand />
+          </Link>
           <p className="mt-2 max-w-sm text-sm text-[var(--muted)]">
             {BRAND.tagline}. Visit us at {BRAND.location}.
           </p>

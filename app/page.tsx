@@ -1,16 +1,21 @@
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HEALING_SERVICES } from "@/lib/services";
 import { createClient } from "@/lib/supabase/server";
-import { HeroSlider } from "@/components/hero-slider";
+import { Hero } from "@/components/Hero";
 import { ServiceCard } from "@/components/service-card";
+
+export const metadata: Metadata = {
+  title: "Traditional Healing Therapies for Pain, Stress, and Recovery",
+  description:
+    "Book a consultation for personalized healing therapies. We listen first, then recommend what works for you.",
+};
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const [{ data: dbServices }, { data: products }] = await Promise.all([
-    supabase.from("services").select("id, slug, name"),
-    supabase.from("products").select("*").limit(3),
-  ]);
+  const { data: dbServices } = await supabase
+    .from("services")
+    .select("id, slug, name");
 
   const slugToId = new Map(
     (dbServices ?? [])
@@ -22,7 +27,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <HeroSlider />
+      <Hero />
 
       <section className="border-b border-[var(--border)] bg-white py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -47,49 +52,6 @@ export default async function HomePage() {
                 service={s}
                 supabaseId={slugToId.get(s.slug)}
               />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-[var(--border)] bg-[#fafafa] py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="font-serif text-3xl text-[var(--text)]">Herbal shop</h2>
-              <p className="mt-2 text-[var(--muted)]">
-                Oils, teas, and daily support crafted with botanical care.
-              </p>
-            </div>
-            <Link href="/shop" className="text-sm font-semibold text-[var(--primary)] hover:underline">
-              Visit shop →
-            </Link>
-          </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            {(products ?? []).map((p) => (
-              <article
-                key={p.id}
-                className="overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="relative aspect-square">
-                  <Image
-                    src={p.image || "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&q=80"}
-                    alt={p.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width:1024px) 100vw, 25vw"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-medium text-[var(--text)]">{p.name}</h3>
-                  <Link
-                    href="/shop"
-                    className="mt-3 inline-block text-sm text-[var(--primary)] hover:underline"
-                  >
-                    View in shop →
-                  </Link>
-                </div>
-              </article>
             ))}
           </div>
         </div>

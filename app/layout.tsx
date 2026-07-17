@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     template: `%s | ${BRAND.name}`,
   },
   description: `${BRAND.tagline} · ${BRAND.location}`,
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

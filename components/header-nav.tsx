@@ -1,6 +1,6 @@
 "use client";
 
-import { BRAND } from "@/lib/constants";
+import { HealingBrand } from "@/components/healing-brand";
 import { HEALING_SERVICES, COMING_SOON_OFFERINGS } from "@/lib/services";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,13 +38,12 @@ export function HeaderNav({ email }: { email: string | null }) {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex flex-col">
-          <span className="font-serif text-lg font-semibold text-[var(--primary)] transition group-hover:text-[var(--secondary)] sm:text-xl">
-            {BRAND.name}
-          </span>
-          <span className="hidden text-xs text-[var(--muted)] sm:block">
-            {BRAND.tagline}
-          </span>
+        <Link
+          href="/"
+          aria-label="i7 Therapeutics Herbal home"
+          className="group min-w-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+        >
+          <HealingBrand compact />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
